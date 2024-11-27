@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paginated Iframe Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #iframe-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        iframe {
+            border: 1px solid #ccc;
+            width: 100%;
+            height: 500px;
+        }
+        .pagination {
+            display: flex;
+            gap: 10px;
+        }
+        .pagination button {
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+        .pagination button:disabled {
+            background-color: #e9e9e9;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div id="iframe-container"></div>
+    <div class="pagination">
+        <button id="prev-btn" disabled>Previous</button>
+        <button id="next-btn">Next</button>
+    </div>
+
+    <script>
+        // List of URLs
+        const urls = [
+            "15376232",
+            "7103101",
+            "2263750",
+            "4905919"
+        ];
+        // Pagination variables
+        const itemsPerPage = 4; // Number of iframes per page
+        let currentPage = 1;
+        const totalPages = Math.ceil(urls.length / itemsPerPage);
+
+        // DOM elements
+        const iframeContainer = document.getElementById("iframe-container");
+        const prevBtn = document.getElementById("prev-btn");
+        const nextBtn = document.getElementById("next-btn");
+
+        // Function to render the current page
+        function renderPage(page) {
+            // Clear the container
+            iframeContainer.innerHTML = "";
+
+            // Calculate start and end indices
+            const startIndex = (page - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, urls.length);
+
+            // Create and append iframes for the current page
+            for (let i = startIndex; i < endIndex; i++) {
+                const iframe = document.createElement("iframe");
+                iframe.src = `https://www.cmoney.tw/forum/user/${urls[i]}`;
+                iframe.title = `Iframe for ${urls[i]}`;
+                iframeContainer.appendChild(iframe);
+            }
+
+            // Update button states
+            prevBtn.disabled = page === 1;
+            nextBtn.disabled = page === totalPages;
+        }
+
+        // Event listeners for pagination buttons
+        prevBtn.addEventListener("click", () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderPage(currentPage);
+            }
+        });
+
+        nextBtn.addEventListener("click", () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderPage(currentPage);
+            }
+        });
+
+        // Initial render
+        renderPage(currentPage);
+    </script>
+</body>
+</html>
